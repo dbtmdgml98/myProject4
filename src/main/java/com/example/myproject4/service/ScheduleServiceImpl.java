@@ -29,12 +29,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
 
         // 요청 받은 데이터로 SCHEDULE 객체 생성 ID 없음
-        Schedule schedule = new Schedule(dto.getThingsToDo(), dto.getName(), dto.getPassword(), dto.getDateOfWriting(), dto.getDateOfUpdating());
+        Schedule schedule = new Schedule(dto.getThingsToDo(), dto.getName(), dto.getPassword());
 
-        // DB 저장
-        Schedule savedSchedule = scheduleRepository.saveSchedule(schedule);
-
-        return new ScheduleResponseDto(savedSchedule);
+        return scheduleRepository.saveSchedule(schedule);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class ScheduleController {
     /**
      * 생성자 주입
      * 클래스가 필요로 하는 의존성을 생성자를 통해 전달하는 방식
-     * @param memoService @Service로 등록된 MemoService 구현체인 Impl
+     * @param scheduleService @Service로 등록된 ScheduleService 구현체인 Impl
      */
     public ScheduleController(ScheduleService scheduleService) {
         this.scheduleService = scheduleService;
