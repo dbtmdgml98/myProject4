@@ -4,11 +4,13 @@ import com.example.myproject4.dto.ScheduleListRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -86,6 +88,13 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
     public Optional<Schedule> findScheduleById(Long id) {
         List<Schedule> result = jdbcTemplate.query("select * from schedule where id = ?", scheduleRowMapperV2(), id);
         return result.stream().findAny();
+    }
+
+    @Override
+    public Schedule findScheduleByIdOrElseThrow(Long id) {
+        List<Schedule> result = jdbcTemplate.query("select * from schedule where id = ?", scheduleRowMapperV2(), id);
+
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exists id = " + id));    // 조회된 일정이 없는 경우 예외 발생
     }
 
     @Override

@@ -46,14 +46,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
 
-        // DB에서 데이터 조회하고 Schedule에 저장
-        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        // DB에서 데이터 조회하고 반환 (일정이 있는 경우에만 반환)
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
-        if (optionalSchedule.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
-        }
-
-        return new ScheduleResponseDto(optionalSchedule.get());
+        return new ScheduleResponseDto(schedule);
     }
 
     @Transactional
@@ -80,8 +76,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
         }
 
-        // 수정된 메모 조회
-        return new ScheduleResponseDto(scheduleRepository.findScheduleById(id).get());
+        // 수정된 일정 DB에서 데이터 조회하고 반환 (일정이 있는 경우에만 반환)
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        return new ScheduleResponseDto(schedule);
     }
 
     @Override
