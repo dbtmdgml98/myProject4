@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Annotation @Service는 @Component와 같다, Spring Bean으로 등록한다는 뜻.
@@ -44,12 +45,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     public ScheduleResponseDto findScheduleById(Long id) {
 
         // DB에서 데이터 조회하고 Schedule에 저장
-        Schedule schedule = scheduleRepository.findScheduleById(id);
+        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
 
-        if (schedule == null) {
+        if (optionalSchedule.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
         }
 
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleResponseDto(optionalSchedule.get());
     }
 }

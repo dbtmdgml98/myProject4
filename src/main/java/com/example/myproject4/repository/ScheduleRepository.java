@@ -4,6 +4,7 @@ import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ScheduleRepository {
 
@@ -11,5 +12,5 @@ public interface ScheduleRepository {
 
     List<ScheduleResponseDto> findAllSchedules();
 
-    Schedule findScheduleById(Long id);
+    Optional<Schedule> findScheduleById(Long id);
 }

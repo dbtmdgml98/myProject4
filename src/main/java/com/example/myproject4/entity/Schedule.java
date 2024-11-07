@@ -21,5 +21,6 @@ public class Schedule {
         this.name = name;
         this.password = password;
         this.createDate = LocalDateTime.now();
+        this.updateDate = LocalDateTime.now();
     }
 }

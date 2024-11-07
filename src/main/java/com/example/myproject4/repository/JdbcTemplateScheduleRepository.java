@@ -2,15 +2,20 @@ package com.example.myproject4.repository;
 
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class JdbcTemplateScheduleRepository implements ScheduleRepository{
@@ -27,13 +32,14 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         // INSERT Query 직접 작성하지 않아도 된다.
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
         jdbcInsert.withTableName("schedule").usingGeneratedKeyColumns("id")
-                .usingColumns("things_to_do", "name", "password", "create_date");
+                .usingColumns("things_to_do", "name", "password", "create_date", "update_date");
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("things_to_do", schedule.getThingsToDo());
         parameters.put("name", schedule.getName());
         parameters.put("password", schedule.getPassword());
         parameters.put("create_date", schedule.getCreateDate());
+        parameters.put("update_date", schedule.getUpdateDate());
 
         // 저장 후 생성된 key값 Number 타입으로 반환하는 메서드
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
@@ -43,11 +49,46 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules() {
-        return List.of();
+        return jdbcTemplate.query("select * from schedule", scheduleRowMapper());
     }
 
     @Override
-    public Schedule findScheduleById(Long id) {
-        return null;
+    public Optional<Schedule> findScheduleById(Long id) {
+        List<Schedule> result = jdbcTemplate.query("select * from schedule where id = ?", scheduleRowMapperV2(), id);
+        return result.stream().findAny();
+    }
+
+    private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
+
+        return new RowMapper<ScheduleResponseDto>() {
+            @Override
+            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new ScheduleResponseDto(
+                        rs.getLong("id"),
+                        rs.getString("things_to_do"),
+                        rs.getString("name"),
+                        rs.getString("password"),
+                        rs.getTimestamp("create_date").toLocalDateTime(),
+                        rs.getTimestamp("update_date").toLocalDateTime()
+                );
+            }
+        };
+    }
+
+    private RowMapper<Schedule> scheduleRowMapperV2() {
+
+        return new RowMapper<Schedule>() {
+            @Override
+            public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new Schedule(
+                        rs.getLong("id"),
+                        rs.getString("things_to_do"),
+                        rs.getString("name"),
+                        rs.getString("password"),
+                        rs.getTimestamp("create_date").toLocalDateTime(),
+                        rs.getTimestamp("update_date").toLocalDateTime()
+                );
+            }
+        };
     }
 }
