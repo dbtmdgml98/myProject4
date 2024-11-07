@@ -1,13 +1,16 @@
 package com.example.myproject4.controller;
 
+import com.example.myproject4.dto.ScheduleListRequestDto;
 import com.example.myproject4.dto.ScheduleRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,9 +43,9 @@ public class ScheduleController {
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
+    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(@RequestBody ScheduleListRequestDto dto) {
 
-        return new ResponseEntity<>(scheduleService.findAllSchedules(),HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findAllSchedules(dto),HttpStatus.OK);
     }
 
     // 선택 일정 조회
@@ -51,4 +54,25 @@ public class ScheduleController {
 
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
     }
+
+    // 선택 일정 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> updateSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+
+        return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getThingsToDo(), dto.getName(), dto.getPassword()), HttpStatus.OK);
+    }
+
+    // 선택 일정 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        scheduleService.deleteSchedule(id, dto.getPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.myproject4.repository;
 
+import com.example.myproject4.dto.ScheduleListRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
 
@@ -10,7 +11,11 @@ public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleResponseDto> findAllSchedules();
+    List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto);
 
     Optional<Schedule> findScheduleById(Long id);
+
+    int updateSchedule(Long id, String thingsToDo, String name);
+
+    int deleteSchedule(Long id);
 }

@@ -23,4 +23,5 @@ public class Schedule {
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
     }
+
 }

@@ -1,11 +1,13 @@
 package com.example.myproject4.service;
 
+import com.example.myproject4.dto.ScheduleListRequestDto;
 import com.example.myproject4.dto.ScheduleRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
 import com.example.myproject4.repository.ScheduleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -36,9 +38,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
+    public List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto) {
 
-        return scheduleRepository.findAllSchedules();
+        return scheduleRepository.findAllSchedules(dto);
     }
 
     @Override
@@ -52,5 +54,52 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         return new ScheduleResponseDto(optionalSchedule.get());
+    }
+
+    @Transactional
+    @Override
+    public ScheduleResponseDto updateSchedule(Long id, String thingsToDo, String name, String password) {
+
+        // 필수값 검증
+        if (thingsToDo == null || name == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The thingsToDo and name are required values.");
+        }
+
+        // 비밀번호 확인
+        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        Schedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
+        if ( !savedSchedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 잘못 되었습니다.");
+        }
+
+        // schedule 수정 및 갯수 반환
+        int updatedRow = scheduleRepository.updateSchedule(id, thingsToDo, name);
+
+        // 수정된 row가 0개라면
+        if (updatedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
+        }
+
+        // 수정된 메모 조회
+        return new ScheduleResponseDto(scheduleRepository.findScheduleById(id).get());
+    }
+
+    @Override
+    public void deleteSchedule(Long id, String password) {
+
+        // 비밀번호 확인
+        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        Schedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
+        if ( !savedSchedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 잘못 되었습니다.");
+        }
+
+        // schedule 삭제 및 갯수 반환
+        int deletedRow = scheduleRepository.deleteSchedule(id);
+
+        // 삭제된 row가 0개라면
+        if (deletedRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
+        }
     }
 }

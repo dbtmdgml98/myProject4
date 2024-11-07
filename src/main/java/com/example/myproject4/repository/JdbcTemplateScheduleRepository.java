@@ -1,5 +1,6 @@
 package com.example.myproject4.repository;
 
+import com.example.myproject4.dto.ScheduleListRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.entity.Schedule;
 
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,15 +51,50 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository{
         return new ScheduleResponseDto(key.longValue(), schedule.getThingsToDo(), schedule.getName(), schedule.getPassword(), schedule.getCreateDate(), schedule.getUpdateDate());
     }
 
+//    @Override
+//    public List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto) {
+//        return jdbcTemplate.query("select * from schedule where name = ? or (where update_date >= ? and update_date < ?)order by update_date", scheduleRowMapper(), dto.getName(), dto.getUpdate_date());
+//    }
+
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        return jdbcTemplate.query("select * from schedule", scheduleRowMapper());
+    public List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto) {
+        StringBuilder query = new StringBuilder("SELECT * FROM schedule");
+        List<Object> params = new ArrayList<>();
+        boolean hasConditions = false;
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            query.append(" WHERE name = ?");
+            params.add(dto.getName());
+            hasConditions = true;
+        }
+        if (dto.getUpdate_date() != null) {
+            LocalDate startDate = dto.getUpdate_date();
+            LocalDateTime startOfDay = startDate.atStartOfDay();
+            LocalDateTime endOfDay = startOfDay.plusDays(1);
+            if (hasConditions) {
+                query.append(" AND update_date >= ? AND update_date < ?");
+            } else {
+                query.append(" WHERE update_date >= ? AND update_date < ?");
+            }
+            params.add(startOfDay);
+            params.add(endOfDay);
+        }
+        query.append(" ORDER BY update_date");
+        return jdbcTemplate.query(query.toString(), scheduleRowMapper(), params.toArray());
     }
 
     @Override
     public Optional<Schedule> findScheduleById(Long id) {
         List<Schedule> result = jdbcTemplate.query("select * from schedule where id = ?", scheduleRowMapperV2(), id);
         return result.stream().findAny();
+    }
+
+    @Override
+    public int updateSchedule(Long id, String thingsToDo, String name) {
+        return jdbcTemplate.update("update schedule set things_to_do = ?, name = ?, update_date = now() where id = ?", thingsToDo, name, id);
+    }
+
+    public int deleteSchedule(Long id) {
+        return jdbcTemplate.update("delete from schedule where id = ?", id);
     }
 
     private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
