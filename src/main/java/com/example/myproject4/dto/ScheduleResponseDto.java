@@ -1,13 +1,11 @@
 package com.example.myproject4.dto;
 
 import com.example.myproject4.entity.Schedule;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-//@AllArgsConstructor
 public class ScheduleResponseDto {
 
     private Long id;
