@@ -1,6 +1,7 @@
 package com.example.myproject4.controller;
 
 import com.example.myproject4.dto.ScheduleListRequestDto;
+import com.example.myproject4.dto.ScheduleListResponseDto;
 import com.example.myproject4.dto.ScheduleRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 import com.example.myproject4.service.ScheduleService;
@@ -35,7 +36,7 @@ public class ScheduleController {
 
     // 일정 생성
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
+    public ResponseEntity<ScheduleListResponseDto> createSchedule(@RequestBody ScheduleRequestDto dto) {
 
         // Service Layer 호출
         return new ResponseEntity<>(scheduleService.saveSchedule(dto), HttpStatus.CREATED);
@@ -43,21 +44,21 @@ public class ScheduleController {
 
     // 전체 일정 조회
     @GetMapping
-    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules(@RequestBody ScheduleListRequestDto dto) {
+    public ResponseEntity<List<ScheduleListResponseDto>> findAllSchedules(@RequestBody ScheduleListRequestDto dto) {
 
         return new ResponseEntity<>(scheduleService.findAllSchedules(dto),HttpStatus.OK);
     }
 
     // 선택 일정 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> findScheduleById(@PathVariable Long id) {
+    public ResponseEntity<ScheduleListResponseDto> findScheduleById(@PathVariable Long id) {
 
         return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
     }
 
     // 선택 일정 수정
     @PutMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> updateSchedule(
+    public ResponseEntity<ScheduleListResponseDto> updateSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto
     ) {

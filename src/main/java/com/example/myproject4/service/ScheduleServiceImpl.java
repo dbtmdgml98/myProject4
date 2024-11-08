@@ -1,8 +1,11 @@
 package com.example.myproject4.service;
 
 import com.example.myproject4.dto.ScheduleListRequestDto;
+import com.example.myproject4.dto.ScheduleListResponseDto;
 import com.example.myproject4.dto.ScheduleRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
+import com.example.myproject4.entity.CheckSchedule;
+import com.example.myproject4.entity.ReturnSchedule;
 import com.example.myproject4.entity.Schedule;
 import com.example.myproject4.repository.ScheduleRepository;
 import org.springframework.http.HttpStatus;
@@ -29,32 +32,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
+    public ScheduleListResponseDto saveSchedule(ScheduleRequestDto dto) {
 
         // 요청 받은 데이터로 SCHEDULE 객체 생성 ID 없음
-        Schedule schedule = new Schedule(dto.getThingsToDo(), dto.getName(), dto.getPassword());
+        ReturnSchedule returnSchedule = new ReturnSchedule(dto.getThingsToDo(), dto.getName(), dto.getPassword());
 
-        return scheduleRepository.saveSchedule(schedule);
+        return scheduleRepository.saveSchedule(returnSchedule);
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto) {
+    public List<ScheduleListResponseDto> findAllSchedules(ScheduleListRequestDto dto) {
 
         return scheduleRepository.findAllSchedules(dto);
     }
 
     @Override
-    public ScheduleResponseDto findScheduleById(Long id) {
+    public ScheduleListResponseDto findScheduleById(Long id) {
 
         // DB에서 데이터 조회하고 반환 (일정이 있는 경우에만 반환)
-        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        CheckSchedule checkSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleListResponseDto(checkSchedule);
     }
 
     @Transactional
     @Override
-    public ScheduleResponseDto updateSchedule(Long id, String thingsToDo, String name, String password) {
+    public ScheduleListResponseDto updateSchedule(Long id, String thingsToDo, String name, String password) {
 
         // 필수값 검증
         if (thingsToDo == null || name == null) {
@@ -62,8 +65,8 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         // 비밀번호 확인
-        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
-        Schedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
+        Optional<ReturnSchedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        ReturnSchedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
         if ( !savedSchedule.getPassword().equals(password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 잘못 되었습니다.");
         }
@@ -77,16 +80,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         // 수정된 일정 DB에서 데이터 조회하고 반환 (일정이 있는 경우에만 반환)
-        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
-        return new ScheduleResponseDto(schedule);
+        ReturnSchedule returnSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+        return new ScheduleListResponseDto(returnSchedule);
     }
 
     @Override
     public void deleteSchedule(Long id, String password) {
 
         // 비밀번호 확인
-        Optional<Schedule> optionalSchedule = scheduleRepository.findScheduleById(id);
-        Schedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
+        Optional<ReturnSchedule> optionalSchedule = scheduleRepository.findScheduleById(id);
+        ReturnSchedule savedSchedule = optionalSchedule.orElseThrow(() -> new IllegalArgumentException("아이디를 확인해주세요"));
         if ( !savedSchedule.getPassword().equals(password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 잘못 되었습니다.");
         }

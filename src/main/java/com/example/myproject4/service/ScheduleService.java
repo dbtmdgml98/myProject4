@@ -1,6 +1,7 @@
 package com.example.myproject4.service;
 
 import com.example.myproject4.dto.ScheduleListRequestDto;
+import com.example.myproject4.dto.ScheduleListResponseDto;
 import com.example.myproject4.dto.ScheduleRequestDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
 
@@ -8,13 +9,13 @@ import java.util.List;
 
 public interface ScheduleService {
 
-    ScheduleResponseDto saveSchedule(ScheduleRequestDto dto);
+    ScheduleListResponseDto saveSchedule(ScheduleRequestDto dto);
 
-    List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto);
+    List<ScheduleListResponseDto> findAllSchedules(ScheduleListRequestDto dto);
 
-    ScheduleResponseDto findScheduleById(Long id);
+    ScheduleListResponseDto findScheduleById(Long id);
 
-    ScheduleResponseDto updateSchedule(Long id, String thingsToDo, String name, String password);
+    ScheduleListResponseDto updateSchedule(Long id, String thingsToDo, String name, String password);
 
     void deleteSchedule(Long id, String password);
 }
