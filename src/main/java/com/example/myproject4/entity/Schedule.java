@@ -16,6 +16,14 @@ public class Schedule {
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
+    public Schedule(Long id, String thingsToDo, String name, LocalDateTime createDate, LocalDateTime updateDate) {
+        this.id = id;
+        this.thingsToDo = thingsToDo;
+        this.name = name;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+    }
+
     public Schedule(String thingsToDo, String name, String password) {
         this.thingsToDo = thingsToDo;
         this.name = name;
@@ -23,5 +31,4 @@ public class Schedule {
         this.createDate = LocalDateTime.now();
         this.updateDate = LocalDateTime.now();
     }
-
 }

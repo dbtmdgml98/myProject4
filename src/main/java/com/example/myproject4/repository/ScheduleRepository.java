@@ -1,10 +1,7 @@
 package com.example.myproject4.repository;
 
 import com.example.myproject4.dto.ScheduleListRequestDto;
-import com.example.myproject4.dto.ScheduleListResponseDto;
 import com.example.myproject4.dto.ScheduleResponseDto;
-import com.example.myproject4.entity.CheckSchedule;
-import com.example.myproject4.entity.ReturnSchedule;
 import com.example.myproject4.entity.Schedule;
 
 import java.util.List;
@@ -12,15 +9,15 @@ import java.util.Optional;
 
 public interface ScheduleRepository {
 
-    ScheduleListResponseDto saveSchedule(ReturnSchedule returnSchedule);
+    ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleListResponseDto> findAllSchedules(ScheduleListRequestDto dto);
+    List<ScheduleResponseDto> findAllSchedules(ScheduleListRequestDto dto);
 
-    Optional<CheckSchedule> findScheduleById(Long id);
+    Optional<Schedule> findScheduleById(Long id);
 
-    CheckSchedule findScheduleByIdOrElseThrow(Long id);
+    Schedule findScheduleByIdOrElseThrow(Long id);
 
-    int updateSchedule(Long id, String thingsToDo, String name);
+    int updateSchedule(Long id, String thingsToDo, String name, String password);
 
-    int deleteSchedule(Long id);
+    int deleteSchedule(Long id,String password);
 }

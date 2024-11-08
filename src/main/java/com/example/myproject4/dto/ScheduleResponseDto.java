@@ -7,13 +7,12 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+//@AllArgsConstructor
 public class ScheduleResponseDto {
 
     private Long id;
     private String thingsToDo;
     private String name;
-    private String password;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
 
@@ -21,9 +20,16 @@ public class ScheduleResponseDto {
         this.id = schedule.getId();
         this.thingsToDo = schedule.getThingsToDo();
         this.name = schedule.getName();
-        this.password = schedule.getPassword();
         this.createDate = schedule.getCreateDate();
         this.updateDate = schedule.getUpdateDate();
+    }
+
+    public ScheduleResponseDto(Long id, String thingsToDo, String name, LocalDateTime createDate, LocalDateTime updateDate) {
+        this.id = id;
+        this.thingsToDo = thingsToDo;
+        this.name = name;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
     }
 
 }

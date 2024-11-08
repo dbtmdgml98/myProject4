@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Getter
 public class ScheduleListRequestDto {
+
     public String name;
-    public LocalDate update_date;
+    public LocalDate updateDate;
 }
